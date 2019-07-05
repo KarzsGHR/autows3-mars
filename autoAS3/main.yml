@@ -4,18 +4,26 @@
   hosts : localhost
   connection : local
   gather_facts: no
+
   vars:
     inventory_hostname : 52.56.211.180
-  vars_file:
+    uri_method: POST
+
+  vars_files:
+    - ../Cred/cred.yaml
+    - ./body.json
+
   tasks:
-    - name: URI Patch
+  - name: URI
+    uri:
       url: "https://{{ inventory_hostname }}/mgmt/shared/appsvcs/declare"
-       method: "GET"
-       user: "admin"
-       password: "autows123!!"
-       validate_certs: no
-#       body: "{{ lookup('template', '../j2/{{cur_action}}_member.j2') }}"
-       body_format: json
+      method: "{{ uri_method }}"
+      user: "{{ bigip_user }}"
+      password: "{{ bigip_pass }}"
+      validate_certs: no
+      status_code: 200
+      body: "{{ lookup('file', './body.json') }}"
+      body_format: json
 
 
 #- name: Update Pool Members
